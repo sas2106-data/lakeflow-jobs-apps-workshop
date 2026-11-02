@@ -55,9 +55,24 @@ These are the prerequisites; the right-hand panels of the architecture diagram s
 
 ---
 
-## 0:00 · Welcome & context (15 min)
+## 0:00 · Welcome & objectives (5 min)
 
-Walk through the architecture diagram, the repo layout, and the claims table in **Catalog Explorer**.
+Introductions and goals. Check that everyone can log in to the workspace and see the Git folder.
+
+## 0:05 · Overview of Databricks (10 min)
+
+The Data Intelligence Platform, and where each module of today fits:
+
+| Platform area | What it does | Today |
+|---|---|---|
+| **Unity Catalog** | One governance layer for data, AI and apps: grants, row filters, column masks, lineage, audit | Module 6 (and everything else) |
+| **Lakeflow** | Connect (ingestion), Declarative Pipelines, **Jobs** (orchestration) | Module 2 |
+| **Databricks SQL & AI/BI** | Serverless SQL warehouses, dashboards, **Genie** for natural-language questions | Module 3 |
+| **Databricks Apps** | Governed data and AI apps on serverless compute | Module 4 |
+| **Asset Bundles & Git folders** | Infrastructure as code and CI/CD for all of the above | Module 5 |
+| **Cloud integration** | Identity provider groups (Entra ID), cloud storage, BI tools | Prerequisites, Module 6 |
+
+Finish on the architecture diagram: today's path through the platform. Then open the claims table in **Catalog Explorer**.
 
 ## 0:15 · Module 1 — Connect to the claims table or generate synthetic data (20 min)
 

@@ -23,7 +23,8 @@ A 3.5-hour, hands-on workshop that builds one governed path end to end on Databr
 
 | Time | Module |
 |---|---|
-| 0:00–0:15 | Welcome and architecture |
+| 0:00–0:05 | Welcome and objectives |
+| 0:05–0:15 | **Overview of Databricks**: Unity Catalog, Lakeflow (Connect, Pipelines, Jobs), Databricks SQL and Genie, Databricks Apps, Asset Bundles; where each module fits |
 | 0:15–0:35 | **1 · Connect** to the claims table, or generate synthetic claims |
 | 0:35–1:10 | **2 · Lakeflow Job** to gold: dependent tasks, schema as a job parameter, Repair run, schedule and triggers |
 | 1:10–1:25 | Break |
