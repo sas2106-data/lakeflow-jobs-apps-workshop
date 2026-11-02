@@ -1,8 +1,7 @@
 command: ["streamlit", "run", "app.py"]
 env:
-  # Injected from the app's "sql-warehouse" resource (databricks.yml or the Apps UI)
+  # Injected from the app's resources (databricks.yml → resources/claims_app.yml, or the Apps UI)
+  - name: GENIE_SPACE_ID
+    valueFrom: genie-space
   - name: DATABRICKS_WAREHOUSE_ID
     valueFrom: sql-warehouse
-  # Stretch exercise: the gold table written by the claims_medallion job — edit to your catalog.schema
-  - name: SUMMARY_TABLE
-    value: "main.claims.gold_claims_by_lob"

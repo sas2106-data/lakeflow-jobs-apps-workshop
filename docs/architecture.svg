@@ -1,0 +1,137 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 930" font-family="Segoe UI, Helvetica, Arial, sans-serif" role="img" aria-label="Workshop architecture: a claims table (or synthetic data) feeds a serverless Lakeflow Job that builds bronze, silver and gold tables in Unity Catalog. A Genie Agent answers questions over the gold tables on a serverless SQL warehouse. A Streamlit Databricks App calls the Genie Conversation API with user authorization. Business users in an Entra ID group get CAN USE on the app, CAN RUN on Genie and SELECT on gold. A Databricks Asset Bundle in Git deploys the job, Genie Agent and app. A panel lists the services that must be enabled.">
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1b2433"/></marker>
+    <marker id="o" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d9480f"/></marker>
+  </defs>
+  <rect width="1200" height="930" fill="#ffffff"/>
+  <text x="20" y="34" font-size="20" font-weight="700" fill="#1b2433">Claims → Gold → Genie → App · workshop architecture</text>
+  <text x="20" y="56" font-size="13" fill="#5b6576">Everything runs on serverless compute, is governed by Unity Catalog, and deploys from one Git repo with a Databricks Asset Bundle.</text>
+
+  <!-- 1 source -->
+  <rect x="20" y="104" width="170" height="130" rx="10" fill="#f4f6f9" stroke="#1b2433" stroke-width="1.4"/>
+  <text x="105" y="96" text-anchor="middle" font-size="11" font-weight="700" fill="#d9480f">① CONNECT</text>
+  <text x="105" y="132" text-anchor="middle" font-size="14" font-weight="700" fill="#1b2433">Claims table</text>
+  <text x="105" y="152" text-anchor="middle" font-size="11" font-family="Consolas, monospace" fill="#5b6576">{catalog}.{schema}</text>
+  <text x="105" y="167" text-anchor="middle" font-size="11" font-family="Consolas, monospace" fill="#5b6576">.claims</text>
+  <text x="105" y="192" text-anchor="middle" font-size="11.5" fill="#5b6576">or synthetic data</text>
+  <text x="105" y="208" text-anchor="middle" font-size="11" font-family="Consolas, monospace" fill="#5b6576">create_sample_data</text>
+
+  <!-- 2 job -->
+  <rect x="215" y="76" width="520" height="210" rx="12" fill="#fdeee6" stroke="#d9480f" stroke-width="1.6"/>
+  <text x="231" y="98" font-size="11" font-weight="700" fill="#d9480f">② LAKEFLOW JOB · claims_medallion · serverless</text>
+  <g font-size="13" font-weight="700" fill="#1b2433" text-anchor="middle">
+    <rect x="231" y="116" width="108" height="58" rx="8" fill="#fff" stroke="#1b2433"/><text x="285" y="140">setup</text>
+    <rect x="355" y="116" width="108" height="58" rx="8" fill="#fff" stroke="#1b2433"/><text x="409" y="140">bronze</text>
+    <rect x="479" y="116" width="108" height="58" rx="8" fill="#fff" stroke="#1b2433"/><text x="533" y="140">silver</text>
+    <rect x="603" y="116" width="116" height="58" rx="8" fill="#fff" stroke="#d9480f" stroke-width="1.8"/><text x="661" y="140" fill="#d9480f">gold</text>
+  </g>
+  <g font-size="10.5" fill="#5b6576" text-anchor="middle">
+    <text x="285" y="158">check source</text><text x="409" y="158">land as-is</text>
+    <text x="533" y="158">dedupe · clean</text><text x="661" y="158">KPIs</text>
+  </g>
+  <g stroke="#1b2433" stroke-width="1.4" marker-end="url(#a)">
+    <line x1="339" y1="145" x2="351" y2="145"/><line x1="463" y1="145" x2="475" y2="145"/><line x1="587" y1="145" x2="599" y2="145"/>
+  </g>
+  <g font-size="10.5" font-family="Consolas, monospace" fill="#5b6576" text-anchor="middle">
+    <text x="409" y="194">bronze_claims</text><text x="533" y="194">silver_claims</text><text x="661" y="194">gold_*</text>
+  </g>
+  <text x="231" y="226" font-size="11.5" fill="#1b2433">⏱ cron 06:00 UTC (paused in dev) · job parameter <tspan font-family="Consolas, monospace">schema</tspan> · task values</text>
+  <text x="231" y="244" font-size="11.5" fill="#1b2433">Repair run · retries · timeout · failure e-mail · file-arrival / table-update triggers</text>
+  <text x="231" y="270" font-size="11" fill="#5b6576">Serverless jobs compute — no cluster to configure</text>
+  <line x1="190" y1="169" x2="211" y2="169" stroke="#1b2433" stroke-width="1.4" marker-end="url(#a)"/>
+
+  <!-- gold -->
+  <rect x="760" y="104" width="190" height="130" rx="10" fill="#f4f6f9" stroke="#1b2433" stroke-width="1.4"/>
+  <text x="855" y="130" text-anchor="middle" font-size="14" font-weight="700" fill="#1b2433">Gold · Unity Catalog</text>
+  <text x="855" y="152" text-anchor="middle" font-size="11" font-family="Consolas, monospace" fill="#5b6576">gold_claims_by_lob</text>
+  <text x="855" y="168" text-anchor="middle" font-size="11" font-family="Consolas, monospace" fill="#5b6576">gold_claims_monthly</text>
+  <text x="855" y="192" text-anchor="middle" font-size="11" fill="#5b6576">grants · row filters ·</text>
+  <text x="855" y="207" text-anchor="middle" font-size="11" fill="#5b6576">column masks · lineage</text>
+  <line x1="719" y1="152" x2="756" y2="160" stroke="#1b2433" stroke-width="1.4" marker-end="url(#a)"/>
+
+  <!-- 3 genie -->
+  <rect x="975" y="104" width="205" height="130" rx="10" fill="#fff" stroke="#d9480f" stroke-width="1.8"/>
+  <text x="1077" y="96" text-anchor="middle" font-size="11" font-weight="700" fill="#d9480f">③ GENIE</text>
+  <text x="1077" y="130" text-anchor="middle" font-size="14" font-weight="700" fill="#d9480f">Genie Agent</text>
+  <text x="1077" y="146" text-anchor="middle" font-size="11" fill="#5b6576">(formerly Genie space)</text>
+  <text x="1077" y="168" text-anchor="middle" font-size="11" fill="#5b6576">instructions · example SQL</text>
+  <text x="1077" y="184" text-anchor="middle" font-size="11" fill="#5b6576">sample questions</text>
+  <text x="1077" y="210" text-anchor="middle" font-size="11" fill="#1b2433">runs on a serverless / pro</text>
+  <text x="1077" y="225" text-anchor="middle" font-size="11" fill="#1b2433">SQL warehouse</text>
+  <line x1="975" y1="169" x2="954" y2="169" stroke="#1b2433" stroke-width="1.4" marker-end="url(#a)"/>
+
+  <!-- 4 app -->
+  <rect x="740" y="330" width="440" height="140" rx="10" fill="#fff" stroke="#d9480f" stroke-width="1.8"/>
+  <text x="960" y="322" text-anchor="middle" font-size="11" font-weight="700" fill="#d9480f">④ APP WITH GENIE</text>
+  <text x="960" y="356" text-anchor="middle" font-size="14" font-weight="700" fill="#d9480f">Databricks App · Streamlit "Claims Genie"</text>
+  <text x="960" y="378" text-anchor="middle" font-size="11.5" fill="#1b2433">chat UI → Genie Conversation API (start conversation, follow-ups, SQL + results)</text>
+  <text x="960" y="399" text-anchor="middle" font-size="11" fill="#5b6576">resources: <tspan font-family="Consolas, monospace">genie-space</tspan> (CAN RUN) · <tspan font-family="Consolas, monospace">sql-warehouse</tspan> (CAN USE)</text>
+  <text x="960" y="423" text-anchor="middle" font-size="11.5" fill="#1b2433">⑥ user authorization, scope <tspan font-family="Consolas, monospace" font-weight="700">genie</tspan>: Genie runs as the signed-in user</text>
+  <text x="960" y="441" text-anchor="middle" font-size="11" fill="#5b6576">(fallback: the app's own service principal; everyone shares its grants)</text>
+  <line x1="1077" y1="330" x2="1077" y2="238" stroke="#d9480f" stroke-width="1.8" marker-end="url(#o)"/>
+  <text x="1086" y="290" font-size="10.5" fill="#d9480f">ask · as user</text>
+
+  <!-- users -->
+  <rect x="380" y="340" width="300" height="120" rx="10" fill="#f4f6f9" stroke="#1b2433" stroke-width="1.4"/>
+  <text x="530" y="366" text-anchor="middle" font-size="14" font-weight="700" fill="#1b2433">Business users</text>
+  <text x="530" y="384" text-anchor="middle" font-size="11" fill="#5b6576">workspace group, synced from Entra ID</text>
+  <text x="530" y="408" text-anchor="middle" font-size="11" fill="#1b2433">⑥ CAN USE on app · CAN RUN on Genie</text>
+  <text x="530" y="425" text-anchor="middle" font-size="11" fill="#1b2433">USE CATALOG / SCHEMA · SELECT on gold</text>
+  <text x="530" y="446" text-anchor="middle" font-size="11" fill="#5b6576">consumer access or Databricks SQL entitlement</text>
+  <line x1="680" y1="400" x2="736" y2="400" stroke="#1b2433" stroke-width="1.4" marker-end="url(#a)"/>
+  <path d="M530,340 L530,312 L1000,312 L1000,238" fill="none" stroke="#8a93a3" stroke-width="1.2" stroke-dasharray="4 4" marker-end="url(#a)"/>
+  <text x="640" y="306" font-size="10.5" fill="#5b6576">or ask directly in Genie / Genie One</text>
+
+  <!-- 5 DAB -->
+  <rect x="20" y="500" width="1160" height="82" rx="10" fill="#eef3fb" stroke="#2a5db0" stroke-width="1.4"/>
+  <text x="36" y="522" font-size="11" font-weight="700" fill="#2a5db0">⑤ DATABRICKS ASSET BUNDLE + GIT CHECK-IN</text>
+  <text x="36" y="546" font-size="12.5" fill="#1b2433" xml:space="preserve">Git repo:  <tspan font-family="Consolas, monospace">databricks.yml</tspan>  +  <tspan font-family="Consolas, monospace">resources/claims_job.yml, claims_genie.yml, claims_app.yml</tspan>  +  <tspan font-family="Consolas, monospace">src/</tspan>  +  <tspan font-family="Consolas, monospace">app/</tspan></text>
+  <text x="36" y="568" font-size="12.5" fill="#1b2433"><tspan font-family="Consolas, monospace">bundle deploy -t dev</tspan> (per-user, schedule paused) → pull request → CI <tspan font-family="Consolas, monospace">bundle deploy -t prod</tspan> as a service principal · one deploy creates the job, Genie Agent and app</text>
+  <g stroke="#2a5db0" stroke-width="1.2" stroke-dasharray="4 4" marker-end="url(#a)">
+    <line x1="300" y1="500" x2="300" y2="290"/><line x1="1150" y1="500" x2="1150" y2="474"/>
+  </g>
+  <text x="306" y="480" font-size="10.5" fill="#2a5db0">deploys</text>
+
+  <!-- prerequisites -->
+  <text x="20" y="622" font-size="16" font-weight="700" fill="#1b2433">What must be available / enabled</text>
+  <rect x="20" y="636" width="370" height="270" rx="10" fill="#fff" stroke="#c9ced8"/>
+  <text x="36" y="660" font-size="12" font-weight="700" fill="#d9480f">ACCOUNT ADMIN</text>
+  <g font-size="12" fill="#1b2433">
+    <text x="36" y="684">✓ Unity Catalog metastore on the workspace</text>
+    <text x="36" y="708">✓ Partner-powered AI features — ON at</text>
+    <text x="54" y="724">account and workspace level (Genie)</text>
+    <text x="36" y="748">✓ Cross-Geo processing, if the workspace's</text>
+    <text x="54" y="764">Geo requires it (Genie)</text>
+    <text x="36" y="788">✓ Account-level Entra ID group (UC grants)</text>
+    <text x="36" y="812">✓ Region supports serverless + Apps</text>
+  </g>
+  <rect x="405" y="636" width="420" height="270" rx="10" fill="#fff" stroke="#c9ced8"/>
+  <text x="421" y="660" font-size="12" font-weight="700" fill="#d9480f">WORKSPACE ADMIN</text>
+  <g font-size="12" fill="#1b2433">
+    <text x="421" y="684">✓ Serverless compute for jobs and notebooks</text>
+    <text x="421" y="708">✓ Serverless (or pro) SQL warehouse; authors CAN USE</text>
+    <text x="421" y="732">✓ Databricks Apps available in the workspace</text>
+    <text x="421" y="756">✓ App user authorization: scope <tspan font-family="Consolas, monospace">genie</tspan> allowed</text>
+    <text x="439" y="772" fill="#5b6576">Settings → Development → Apps → OAuth scopes</text>
+    <text x="421" y="796">✓ Entitlements: Databricks SQL (Genie authors);</text>
+    <text x="439" y="812">consumer access or Databricks SQL (users)</text>
+    <text x="421" y="836">✓ Git folders + Git provider credentials</text>
+    <text x="421" y="860">✓ Databricks CLI or web terminal for DABs</text>
+    <text x="421" y="884">✓ UC: USE CATALOG, SELECT on claims, CREATE SCHEMA</text>
+  </g>
+  <rect x="840" y="636" width="340" height="270" rx="10" fill="#fff8e8" stroke="#c99a2e"/>
+  <text x="856" y="660" font-size="12" font-weight="700" fill="#8a6100">GOOD TO KNOW</text>
+  <g font-size="12" fill="#1b2433">
+    <text x="856" y="684">✗ Not needed: Genie App Builder</text>
+    <text x="874" y="700" fill="#5b6576">("Governed agentic app-building", Beta).</text>
+    <text x="874" y="716" fill="#5b6576">The app adds Genie as a standard resource.</text>
+    <text x="856" y="742">€ Genie One / Genie Agents: free for users</text>
+    <text x="874" y="758" fill="#5b6576">until 31 Jan 2027. Service principal usage</text>
+    <text x="874" y="774" fill="#5b6576">is billed, so prefer user authorization.</text>
+    <text x="856" y="800">⚠ The Genie Agent needs the gold tables</text>
+    <text x="874" y="816" fill="#5b6576">to exist: run the job before the first</text>
+    <text x="874" y="832" fill="#5b6576">bundle deploy of the Genie Agent.</text>
+    <text x="856" y="858">⚠ Dev mode doesn't prefix app names:</text>
+    <text x="874" y="874" fill="#5b6576">set <tspan font-family="Consolas, monospace">app_name</tspan> per attendee.</text>
+  </g>
+</svg>

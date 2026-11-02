@@ -1,0 +1,25 @@
+# Module 4 — Databricks App (Streamlit) that chats with the Genie space
+resources:
+  apps:
+    claims_app:
+      name: ${var.app_name}
+      description: Claims Genie — ask questions about gold claims data
+      source_code_path: ../app
+      resources:
+        - name: genie-space
+          genie_space:
+            name: claims-genie
+            space_id: ${resources.genie_spaces.claims_genie.id}
+            permission: CAN_RUN
+        - name: sql-warehouse
+          sql_warehouse:
+            id: ${var.warehouse_id}
+            permission: CAN_USE
+      # Module 6 — user authorization: Genie runs as the signed-in user, so their own UC grants apply.
+      # Remove this block to run everything as the app's service principal instead.
+      user_api_scopes:
+        - genie
+      # Module 6 — who can open the app
+      permissions:
+        - group_name: ${var.group_name}
+          level: CAN_USE

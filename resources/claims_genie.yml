@@ -1,0 +1,47 @@
+# Module 3 — Genie space over the gold tables
+# Tip: build the space in the UI first, then capture it with
+#   databricks bundle generate genie-space --existing-id <id>
+resources:
+  genie_spaces:
+    claims_genie:
+      title: Claims Gold — Genie
+      description: Ask questions about claims KPIs by line of business and by loss month (gold layer).
+      warehouse_id: ${var.warehouse_id}
+      serialized_space:
+        version: 2
+        config:
+          sample_questions:
+            - { id: "a1000000000000000000000000000001", question: [ "Which line of business has the most open claims?" ] }
+            - { id: "a1000000000000000000000000000002", question: [ "Show incurred vs paid by line of business" ] }
+            - { id: "a1000000000000000000000000000003", question: [ "How did monthly claim counts trend over the last 12 months?" ] }
+            - { id: "a1000000000000000000000000000004", question: [ "What is the average severity for Motor?" ] }
+        data_sources:
+          tables:
+            - identifier: ${var.catalog}.${var.target_schema}.gold_claims_by_lob
+              description: [ "One row per line of business: claim counts, open claims, incurred, paid and outstanding amounts, average severity and report lag." ]
+            - identifier: ${var.catalog}.${var.target_schema}.gold_claims_monthly
+              description: [ "Claim counts and incurred/paid amounts by loss month and line of business." ]
+        instructions:
+          text_instructions:
+            - id: "b1000000000000000000000000000001"
+              content:
+                - |
+                  You answer questions about insurance claims from the gold tables only.
+                  - "Open claims" means claim_status is not 'closed' (already counted in open_claims).
+                  - "Severity" means average incurred amount per claim (avg_severity).
+                  - "Outstanding" = incurred_amount - paid_amount (outstanding_amount).
+                  - For trends use gold_claims_monthly and order by loss_month; for totals by line of business use gold_claims_by_lob.
+                  - Amounts are in the policy currency; round money to whole units and ratios to one decimal.
+          example_question_sqls:
+            - id: "c1000000000000000000000000000001"
+              question: [ "Which line of business has the most open claims?" ]
+              sql:
+                - "SELECT line_of_business, open_claims, claims FROM ${var.catalog}.${var.target_schema}.gold_claims_by_lob ORDER BY open_claims DESC"
+            - id: "c1000000000000000000000000000002"
+              question: [ "Paid-to-incurred ratio by line of business" ]
+              sql:
+                - "SELECT line_of_business, ROUND(100 * paid_amount / incurred_amount, 1) AS paid_to_incurred_pct FROM ${var.catalog}.${var.target_schema}.gold_claims_by_lob ORDER BY paid_to_incurred_pct DESC"
+      # Module 6 — who can ask questions in the space
+      permissions:
+        - group_name: ${var.group_name}
+          level: CAN_RUN
