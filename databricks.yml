@@ -1,0 +1,96 @@
+# Lakeflow Jobs & Databricks Apps workshop
+# Set variables once per shell (works in bash and zsh):
+#   export BUNDLE_VAR_schema=<claims schema> BUNDLE_VAR_target_schema=<claims schema>_<you> \
+#          BUNDLE_VAR_warehouse_id=<id> BUNDLE_VAR_app_name=claims-<you>
+# Deploy:  databricks bundle validate -t dev && databricks bundle deploy -t dev
+# Run:     databricks bundle run claims_medallion  (whole job: setup → bronze → silver → gold)
+#          databricks bundle run claims_app      (deploy + start the app)
+bundle:
+  name: lakeflow-apps-workshop
+
+variables:
+  catalog:
+    description: Catalog that holds the claims table
+    default: main
+  schema:
+    description: Schema that holds the claims table — provided at deploy/run time
+  claims_table:
+    description: Name of the claims table in that schema
+    default: claims
+  target_schema:
+    description: Schema for bronze/silver/gold tables (blank = same as schema)
+    default: ""
+  create_sample_data:
+    description: Create a synthetic claims table if it doesn't exist (dry runs only)
+    default: "false"
+  warehouse_id:
+    description: SQL warehouse the app uses to read the summary table
+  group_name:
+    description: Workspace group that may open the app
+    default: workshop-users
+  app_name:
+    description: App name — unique per attendee (lowercase, digits, hyphens; max 30 chars), e.g. claims-jsmith
+    default: claims-hello
+
+resources:
+  jobs:
+    claims_medallion:
+      name: claims-medallion
+      # Module 2 — schedule (dev mode pauses it automatically)
+      schedule:
+        quartz_cron_expression: "0 0 6 * * ?"
+        timezone_id: UTC
+      max_concurrent_runs: 1
+      timeout_seconds: 3600
+      email_notifications:
+        on_failure: [ "${workspace.current_user.userName}" ]
+      parameters:
+        - { name: catalog,            default: "${var.catalog}" }
+        - { name: schema,             default: "${var.schema}" }
+        - { name: claims_table,       default: "${var.claims_table}" }
+        - { name: target_schema,      default: "${var.target_schema}" }
+        - { name: create_sample_data, default: "${var.create_sample_data}" }
+        - { name: run_date,           default: "{{job.start_time.iso_date}}" }
+        - { name: simulate_failure,   default: "false" }
+      # Module 1 — tasks in one job, serverless compute (no cluster block)
+      tasks:
+        - task_key: setup
+          notebook_task: { notebook_path: ./src/00_setup.py }
+        - task_key: bronze
+          depends_on: [ { task_key: setup } ]
+          notebook_task: { notebook_path: ./src/01_bronze.py }
+        - task_key: silver
+          depends_on: [ { task_key: bronze } ]
+          notebook_task: { notebook_path: ./src/02_silver.py }
+        - task_key: gold
+          depends_on: [ { task_key: silver } ]
+          max_retries: 1
+          min_retry_interval_millis: 30000
+          notebook_task: { notebook_path: ./src/03_gold.py }
+
+  apps:
+    claims_app:
+      name: ${var.app_name}
+      description: Workshop — Streamlit hello world + gold claims KPIs
+      source_code_path: ./app
+      resources:
+        - name: sql-warehouse
+          sql_warehouse:
+            id: ${var.warehouse_id}
+            permission: CAN_USE
+      # Module 5 — permissions (if time)
+      permissions:
+        - group_name: ${var.group_name}
+          level: CAN_USE
+
+targets:
+  dev:
+    mode: development
+    default: true
+  prod:
+    mode: production
+    # In prod, deploy from CI as a service principal and point at the real source:
+    # variables:
+    #   catalog: main
+    #   schema: claims
+    #   target_schema: claims_gold
